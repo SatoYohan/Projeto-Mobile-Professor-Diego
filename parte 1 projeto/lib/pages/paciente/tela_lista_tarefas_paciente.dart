@@ -57,9 +57,6 @@ class _TelaListaTarefasPacienteState extends State<TelaListaTarefasPaciente> {
                       setState(() {
                         tarefa.concluida = value!;
                       });
-                      // A lógica para salvar o estado do checkbox precisaria ser mais robusta
-                      // em um app real, ligando a tarefa ao seu prontuário.
-                      // Por simplicidade, isso é apenas uma mudança visual.
                     },
                   ),
                 ),
@@ -70,4 +67,5 @@ class _TelaListaTarefasPacienteState extends State<TelaListaTarefasPaciente> {
       ),
     );
   }
+
 }
