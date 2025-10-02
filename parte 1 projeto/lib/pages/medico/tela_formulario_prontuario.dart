@@ -171,7 +171,6 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
                TextFormField(
                  controller: _tarefaTituloControllers[index],
                  decoration: const InputDecoration(labelText: 'Título da Tarefa'),
-                 // Opcional: Adicionar validação se o título for obrigatório
                ),
                TextFormField(
                  controller: _tarefaDescricaoControllers[index],
@@ -183,4 +182,5 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
        );
     });
   }
+
 }
