@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Adicione a dependência 'intl' no seu pubspec.yaml
+import 'package:intl/intl.dart';
 import '../../models/prontuario_model.dart';
 import '../../models/usuario_model.dart';
 import '../../repositories/app_repository.dart';
@@ -87,4 +87,5 @@ class _TelaDetalhesPacienteState extends State<TelaDetalhesPaciente> {
       ),
     );
   }
+
 }
