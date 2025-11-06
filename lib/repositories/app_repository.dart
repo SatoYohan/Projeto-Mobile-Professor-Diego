@@ -22,17 +22,20 @@ class AppRepository {
     var medico1 = Usuario(
       id: 'med1',
       nome: 'Dr. House',
-      tipo: TipoUsuario.medico,
+      email: 'medico@exemplo.com', // <-- ADICIONADO
+      tipo: 'medico', // <-- MUDADO DE ENUM PARA STRING
     );
     var paciente1 = Usuario(
       id: 'pac1',
       nome: 'João da Silva',
-      tipo: TipoUsuario.paciente,
+      email: 'joao@exemplo.com', // <-- ADICIONADO
+      tipo: 'paciente', // <-- MUDADO DE ENUM PARA STRING
     );
     var paciente2 = Usuario(
       id: 'pac2',
       nome: 'Maria Oliveira',
-      tipo: TipoUsuario.paciente,
+      email: 'maria@exemplo.com', // <-- ADICIONADO
+      tipo: 'paciente', // <-- MUDADO DE ENUM PARA STRING
     );
     _usuarios.addAll([medico1, paciente1, paciente2]);
 
@@ -88,7 +91,9 @@ class AppRepository {
 
   Future<List<Usuario>> getPacientes() async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return _usuarios.where((u) => u.tipo == TipoUsuario.paciente).toList();
+    // --- CORREÇÃO AQUI ---
+    // Compara com a string 'paciente' em vez do enum
+    return _usuarios.where((u) => u.tipo == 'paciente').toList();
   }
 
   Future<List<Prontuario>> getProntuariosPorPaciente(String pacienteId) async {
