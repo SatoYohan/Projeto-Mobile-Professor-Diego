@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/usuario_model.dart';
-import '../../repositories/app_repository.dart';
-import '../../service/auth_service.dart'; // <-- IMPORTAR AUTH
-import '../comum/tela_editar_perfil.dart'; // <-- IMPORTAR TELA DE PERFIL
+import '../../service/auth_service.dart';
+import '../../service/firestore_service.dart';
+import '../comum/tela_editar_perfil.dart';
 import 'tela_detalhes_paciente.dart';
 
 class TelaListaPacientes extends StatefulWidget {
@@ -14,23 +14,28 @@ class TelaListaPacientes extends StatefulWidget {
 }
 
 class _TelaListaPacientesState extends State<TelaListaPacientes> {
-  final AppRepository _repository = AppRepository();
-  final AuthService _authService = AuthService(); // <-- INSTANCIAR AUTH
+  // --- MUDANÇA DA REQ 2 ---
+  // Trocamos o repositório falso pelo serviço real do Firestore
+  final FirestoreService _firestoreService =
+      FirestoreService(); // <-- ADICIONADO
+  final AuthService _authService = AuthService();
+
   late Future<List<Usuario>> _futurePacientes;
 
   @override
   void initState() {
     super.initState();
-    _futurePacientes = _repository.getPacientes();
+    // --- MUDANÇA DA REQ 2 ---
+    // Agora buscamos os pacientes REAIS do Firestore
+    _futurePacientes = _firestoreService.getTodosPacientes();
   }
 
-  // --- MÉTODO PARA NAVEGAR PARA O PERFIL ---
-  void _navegarParaPerfil(BuildContext context) {
+  // --- MÉTODO ADICIONADO PARA NAVEGAR PARA O PERFIL ---
+  void _navegarParaPerfil(BuildContext context, Usuario usuario) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        // Passa o objeto 'medico' (que é um Usuario) para a tela de edição
-        builder: (context) => TelaEditarPerfil(usuario: widget.medico),
+        builder: (context) => TelaEditarPerfil(usuario: usuario),
       ),
     );
   }
@@ -39,14 +44,14 @@ class _TelaListaPacientesState extends State<TelaListaPacientes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meus Pacientes - ${widget.medico.nome}'),
-        // --- BOTÕES ADICIONADOS AQUI ---
+        title: Text('Pacientes - ${widget.medico.nome}'),
+        // --- BOTÕES ADICIONADOS (Igual à tela do paciente) ---
         actions: [
           // Botão de Perfil
           IconButton(
             icon: const Icon(Icons.person_rounded),
             tooltip: 'Editar Perfil',
-            onPressed: () => _navegarParaPerfil(context),
+            onPressed: () => _navegarParaPerfil(context, widget.medico),
           ),
           // Botão de Logout
           IconButton(
@@ -62,9 +67,20 @@ class _TelaListaPacientesState extends State<TelaListaPacientes> {
       body: FutureBuilder<List<Usuario>>(
         future: _futurePacientes,
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar pacientes.'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Nenhum paciente encontrado.'));
+          }
+
           final pacientes = snapshot.data!;
+
           return ListView.builder(
             itemCount: pacientes.length,
             itemBuilder: (context, index) {
@@ -73,7 +89,10 @@ class _TelaListaPacientesState extends State<TelaListaPacientes> {
                 child: ListTile(
                   leading: const Icon(Icons.person_outline),
                   title: Text(paciente.nome),
+                  subtitle: Text(paciente.email), // Mostra o e-mail
                   onTap: () {
+                    // A navegação para os detalhes do paciente continua
+                    // funcionando da mesma forma
                     Navigator.push(
                       context,
                       MaterialPageRoute(

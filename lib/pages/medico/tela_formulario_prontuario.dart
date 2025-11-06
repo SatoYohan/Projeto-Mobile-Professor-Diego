@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'dart:math'; // Usado para o ID aleatório das tarefas
 import '../../models/prontuario_model.dart';
 import '../../models/tarefa_model.dart';
 import '../../models/usuario_model.dart';
-import '../../repositories/app_repository.dart';
+import '../../service/firestore_service.dart';
 
 class TelaFormularioProntuario extends StatefulWidget {
   final Usuario paciente;
@@ -16,7 +16,10 @@ class TelaFormularioProntuario extends StatefulWidget {
 
 class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
   final _formKey = GlobalKey<FormState>();
-  final _repository = AppRepository();
+
+  // Trocamos o repositório falso pelo serviço real do Firestore
+  final _firestoreService = FirestoreService();
+
   final _notasController = TextEditingController();
   final List<TextEditingController> _tarefaTituloControllers = [];
   final List<TextEditingController> _tarefaDescricaoControllers = [];
@@ -57,7 +60,9 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
   }
 
   void _submeterFormulario() async {
-    if (_formKey.currentState!.validate()) {
+    // Valida o formulário
+    if (_formKey.currentState?.validate() ?? false) {
+      // 1. Cria a lista de Tarefas
       final List<Tarefa> novasTarefas = [];
       for (int i = 0; i < _tarefaTituloControllers.length; i++) {
         final titulo = _tarefaTituloControllers[i].text;
@@ -65,7 +70,8 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
         if (titulo.isNotEmpty) {
           novasTarefas.add(
             Tarefa(
-              id: 't${Random().nextInt(1000)}', // ID aleatório
+              // O ID da tarefa é só um ID local
+              id: 't${DateTime.now().millisecondsSinceEpoch}-$i',
               titulo: titulo,
               descricao: descricao,
             ),
@@ -73,18 +79,30 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
         }
       }
 
+      // 2. Cria o objeto Prontuario
+      // O ID do prontuário será gerado pelo Firestore,
+      // então passamos um ID temporário que será ignorado.
       final novoProntuario = Prontuario(
-        id: 'pront${Random().nextInt(1000)}', // ID aleatório
-        pacienteId: widget.paciente.id,
+        id: 'temp', // O Firestore vai gerar o ID real
+        pacienteId: widget.paciente.id, // O ID do paciente selecionado
         dataConsulta: DateTime.now(),
         notasMedico: _notasController.text,
         tarefas: novasTarefas,
       );
 
-      await _repository.salvarProntuario(novoProntuario);
+      // Salva o prontuário usando o FirestoreService
+      await _firestoreService.salvarProntuario(novoProntuario);
 
       if (mounted) {
-        Navigator.pop(context, true); // Retorna 'true' para indicar sucesso
+        // Mostra feedback
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Prontuário salvo com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Fecha o formulário
+        Navigator.pop(context, true);
       }
     }
   }
@@ -123,7 +141,15 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
+
+              // Constrói a lista de campos de tarefa
+              if (_tarefaTituloControllers.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Center(child: Text('Adicione pelo menos uma tarefa.')),
+                ),
               ..._buildListaDeTarefas(),
+
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: _adicionarCampoTarefa,
@@ -166,11 +192,11 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
                     'Tarefa ${index + 1}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  if (_tarefaTituloControllers.length > 1)
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () => _removerCampoTarefa(index),
-                    ),
+                  // Botão de deletar o campo de tarefa
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    onPressed: () => _removerCampoTarefa(index),
+                  ),
                 ],
               ),
               TextFormField(
@@ -178,6 +204,15 @@ class _TelaFormularioProntuarioState extends State<TelaFormularioProntuario> {
                 decoration: const InputDecoration(
                   labelText: 'Título da Tarefa',
                 ),
+                validator: (value) {
+                  // se o título estiver
+                  if (value != null &&
+                      value.isNotEmpty &&
+                      _tarefaDescricaoControllers[index].text.isEmpty) {
+                    return 'Descrição é obrigatória se o título for preenchido.';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: _tarefaDescricaoControllers[index],

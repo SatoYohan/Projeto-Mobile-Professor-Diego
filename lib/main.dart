@@ -37,14 +37,12 @@ class ClinicaApp extends StatelessWidget {
           foregroundColor: Colors.black,
         ),
 
-        // --- CORREÇÃO DO CardTheme -> CardThemeData ---
         cardTheme: CardThemeData(
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
 
-      // --- ALTERADO PARA O 'AuthGate' ---
       // Ele vai decidir se mostra o Login ou a Tela de Seleção
       home: const AuthGate(),
     );
