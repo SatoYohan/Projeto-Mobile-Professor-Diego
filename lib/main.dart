@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'pages/comum/tela_selecao_perfil.dart'; // Import da nova tela
+import 'package:firebase_core/firebase_core.dart'; // Import do Firebase
+import 'pages/comum/auth_gate.dart'; // Import do nosso "Portão"
+// import 'pages/comum/tela_selecao_perfil.dart'; // Não precisamos mais disso aqui
 
 // --- PONTO DE ENTRADA DO APLICATIVO ---
-void main() {
+void main() async {
+  // 'main' agora é assíncrona
+  // Garante que o Flutter esteja inicializado
+  WidgetsFlutterBinding.ensureInitialized();
+  // Inicializa o Firebase
+  await Firebase.initializeApp();
+
   runApp(const ClinicaApp()); // Nome do App atualizado
 }
 
@@ -29,18 +37,16 @@ class ClinicaApp extends StatelessWidget {
           foregroundColor: Colors.black,
         ),
 
-        // --- CORREÇÃO 1 AQUI ---
-        // O Flutter espera um 'CardThemeData', e não 'CardTheme'.
+        // --- CORREÇÃO DO CardTheme -> CardThemeData ---
         cardTheme: CardThemeData(
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
 
-      // --- CORREÇÃO 2 AQUI ---
-      // Removemos o 'const' porque TelaSelecaoPerfil não é uma constante
-      // (ela inicializa um repositório).
-      home: TelaSelecaoPerfil(),
+      // --- ALTERADO PARA O 'AuthGate' ---
+      // Ele vai decidir se mostra o Login ou a Tela de Seleção
+      home: const AuthGate(),
     );
   }
 }
