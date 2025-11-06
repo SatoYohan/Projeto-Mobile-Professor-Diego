@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/usuario_model.dart' as app;
+import '../models/usuario_model.dart'
+    as app; // Usamos 'as app' para evitar conflito de nomes
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -8,12 +9,15 @@ class FirestoreService {
   late final CollectionReference<app.Usuario> _usuariosRef;
 
   FirestoreService() {
-    // Inicializa a referência com o conversor
+    // Inicializa a referência com o conversor .withConverter
+    // Isto diz ao Firestore como transformar um documento num objeto Usuario e vice-versa
     _usuariosRef = _db
         .collection('usuarios')
-        .withConverter(
-          fromFirestore: app.Usuario.fromFirestore,
-          toFirestore: (app.Usuario usuario, _) => usuario.toFirestore(),
+        .withConverter<app.Usuario>(
+          fromFirestore:
+              app.Usuario.fromFirestore, // O seu modelo sabe como ler os dados
+          toFirestore: (app.Usuario usuario, _) =>
+              usuario.toFirestore(), // O seu modelo sabe como escrever os dados
         );
   }
 
@@ -55,6 +59,18 @@ class FirestoreService {
       await _usuariosRef.doc(uid).update({'tipo': tipo});
     } catch (e) {
       print('Erro ao definir tipo de perfil: $e');
+      // Tratar erro
+    }
+  }
+
+  // --- MÉTODO ADICIONADO PARA O PEDIDO DE EDIÇÃO ---
+  /// Atualiza os dados do perfil do usuário no Firestore
+  Future<void> updateUserProfile(String uid, String nome, String tipo) async {
+    try {
+      // Usa o método 'update' para alterar campos específicos
+      await _usuariosRef.doc(uid).update({'nome': nome, 'tipo': tipo});
+    } catch (e) {
+      print('Erro ao atualizar perfil do usuário: $e');
       // Tratar erro
     }
   }
