@@ -14,10 +14,8 @@ class TelaListaPacientes extends StatefulWidget {
 }
 
 class _TelaListaPacientesState extends State<TelaListaPacientes> {
-  // --- MUDANÇA DA REQ 2 ---
   // Trocamos o repositório falso pelo serviço real do Firestore
-  final FirestoreService _firestoreService =
-      FirestoreService(); // <-- ADICIONADO
+  final FirestoreService _firestoreService = FirestoreService();
   final AuthService _authService = AuthService();
 
   late Future<List<Usuario>> _futurePacientes;
@@ -25,9 +23,9 @@ class _TelaListaPacientesState extends State<TelaListaPacientes> {
   @override
   void initState() {
     super.initState();
-    // --- MUDANÇA DA REQ 2 ---
     // Agora buscamos os pacientes REAIS do Firestore
-    _futurePacientes = _firestoreService.getTodosPacientes();
+    _futurePacientes = _firestoreService
+        .getTodosPacientes(); // <-- ESTA LINHA VAI FUNCIONAR AGORA
   }
 
   // --- MÉTODO ADICIONADO PARA NAVEGAR PARA O PERFIL ---
