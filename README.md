@@ -1,8 +1,122 @@
-Projeto Mobile (Flutter) - App de Gestão ClínicaIntegrantes:Abner Yohan Sato, 2459299Ricardo Koji Takenaka, 2509857📄 Descrição do ProjetoEste aplicativo, desenvolvido em Flutter para a disciplina de Desenvolvimento Mobile, simula uma plataforma de gestão clínica. Ele evoluiu de um protótipo com dados em memória para uma aplicação completa, integrada ao Google Firebase (Auth e Firestore) e utilizando recursos nativos e APIs externas.✨ FuncionalidadesO aplicativo implementa um fluxo de usuário completo, desde o cadastro até a utilização das funções principais:Parte 1 & 2 (Core e Firebase)Sistema de Autenticação (Firebase Auth):Cadastro e Login com E-mail/Senha.Sessão persistente e Logout.Banco de Dados (Cloud Firestore):Armazenamento de usuários, prontuários e tarefas em tempo real.Perfis de Usuário:Redirecionamento automático para tela de Médico ou Paciente.Visão do Médico:Visualiza lista de pacientes reais.CRUD completo de prontuários (Criar, Ler, Deletar).Visão do Paciente:Visualiza tarefas atribuídas.Marca tarefas como concluídas (atualização em tempo real).Parte 3 (Integrações e Recursos Nativos)API Externa (ViaCEP):Na tela de edição de perfil, ao digitar um CEP válido, o aplicativo consulta a API do ViaCEP e preenche automaticamente o endereço (Rua, Bairro, Cidade, UF).Recurso Nativo (Câmera):Na tela de edição de perfil, o usuário pode utilizar a câmera do dispositivo para tirar uma foto de perfil.A foto é processada e salva no banco de dados para persistência.📂 Estrutura do ProjetoO projeto segue uma arquitetura separando lógica e interface:/lib/models: Classes de dados (Usuario, Prontuario, Tarefa)./lib/services: Lógica de backend e APIs:auth_service.dart: Gerencia autenticação.firestore_service.dart: Gerencia o banco de dados.api_service.dart: Gerencia a comunicação com a API ViaCEP./lib/pages: Telas divididas por contexto (comum, medico, paciente)./lib/main.dart: Inicialização do app e Firebase.🚀 Como Instalar e Rodar (Obrigatório)Este projeto requer configuração de backend. Você DEVE conectá-lo ao seu próprio projeto Firebase. O arquivo lib/firebase_options.dart foi ignorado por segurança.1. Clone o Repositóriogit clone [https://github.com/SatoYohan/Projeto-Mobile-Professor-Diego.git](https://github.com/SatoYohan/Projeto-Mobile-Professor-Diego.git)
+Projeto Mobile (Flutter) - App de Gestão Clínica
+
+Integrantes:
+
+Abner Yohan Sato, 2459299
+
+Ricardo Koji Takenaka, 2509857
+
+📄 Descrição do Projeto
+
+Este aplicativo, desenvolvido em Flutter para a disciplina de Desenvolvimento Mobile, simula uma plataforma de gestão clínica. Ele evoluiu de um protótipo com dados em memória para uma aplicação completa, integrada ao Google Firebase (Auth e Firestore) e utilizando recursos nativos e APIs externas.
+
+✨ Funcionalidades
+
+O aplicativo implementa um fluxo de usuário completo, desde o cadastro até a utilização das funções principais:
+
+Parte 1 & 2 (Core e Firebase)
+
+Sistema de Autenticação (Firebase Auth):
+
+Cadastro e Login com E-mail/Senha.
+
+Sessão persistente e Logout.
+
+Banco de Dados (Cloud Firestore):
+
+Armazenamento de usuários, prontuários e tarefas em tempo real.
+
+Perfis de Usuário:
+
+Redirecionamento automático para tela de Médico ou Paciente.
+
+Visão do Médico:
+
+Visualiza lista de pacientes reais.
+
+CRUD completo de prontuários (Criar, Ler, Deletar).
+
+Visão do Paciente:
+
+Visualiza tarefas atribuídas.
+
+Marca tarefas como concluídas (atualização em tempo real).
+
+Parte 3 (Integrações e Recursos Nativos)
+
+API Externa (ViaCEP):
+
+Na tela de edição de perfil, ao digitar um CEP válido, o aplicativo consulta a API do ViaCEP e preenche automaticamente o endereço (Rua, Bairro, Cidade, UF).
+
+Recurso Nativo (Câmera):
+
+Na tela de edição de perfil, o usuário pode utilizar a câmera do dispositivo para tirar uma foto de perfil.
+
+A foto é processada e salva no banco de dados para persistência.
+
+📂 Estrutura do Projeto
+
+O projeto segue uma arquitetura separando lógica e interface:
+
+/lib/models: Classes de dados (Usuario, Prontuario, Tarefa).
+
+/lib/services: Lógica de backend e APIs:
+
+auth_service.dart: Gerencia autenticação.
+
+firestore_service.dart: Gerencia o banco de dados.
+
+api_service.dart: Gerencia a comunicação com a API ViaCEP.
+
+/lib/pages: Telas divididas por contexto (comum, medico, paciente).
+
+/lib/main.dart: Inicialização do app e Firebase.
+
+🚀 Como Instalar e Rodar (Obrigatório)
+
+Este projeto requer configuração de backend. Você DEVE conectá-lo ao seu próprio projeto Firebase. O arquivo lib/firebase_options.dart foi ignorado por segurança.
+
+1. Clone o Repositório
+
+git clone [https://github.com/SatoYohan/Projeto-Mobile-Professor-Diego.git](https://github.com/SatoYohan/Projeto-Mobile-Professor-Diego.git)
 cd Projeto-Mobile-Professor-Diego
-2. Crie um Projeto no FirebaseAcesse o Console do Firebase e crie um projeto novo.3. Habilite os Serviços do FirebaseNo console do seu projeto:Authentication: Ative o método de login por "E-mail/Senha".Firestore Database: Crie um banco de dados em "Modo de Teste".4. Instale as Ferramentas de CLICertifique-se de ter o Node.js instalado e rode:npm install -g firebase-tools
+
+
+2. Crie um Projeto no Firebase
+
+Acesse o Console do Firebase e crie um projeto novo.
+
+3. Habilite os Serviços do Firebase
+
+No console do seu projeto:
+
+Authentication: Ative o método de login por "E-mail/Senha".
+
+Firestore Database: Crie um banco de dados em "Modo de Teste".
+
+4. Instale as Ferramentas de CLI
+
+Certifique-se de ter o Node.js instalado e rode:
+
+npm install -g firebase-tools
 dart pub global activate flutterfire_cli
-5. Configure o Firebase no ProjetoConecte o código ao seu backend:firebase login
+
+
+5. Configure o Firebase no Projeto
+
+Conecte o código ao seu backend:
+
+firebase login
 flutterfire configure
-(Selecione o seu projeto recém-criado quando solicitado).6. Instale as Dependênciasflutter pub get
-7. Execute o Aplicativoflutter run
+
+
+(Selecione o seu projeto recém-criado quando solicitado).
+
+6. Instale as Dependências
+
+flutter pub get
+
+
+7. Execute o Aplicativo
+
+flutter run
